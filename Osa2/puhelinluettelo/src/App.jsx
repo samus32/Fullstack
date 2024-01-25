@@ -70,6 +70,12 @@ const App = () => {
             setSuccessMessage(null)
           }, 2000)
         })
+        .catch(error => {
+          setErrorMessage(`${error.response.data.error}`)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 2000)
+        })
     }
   }
 
