@@ -23,6 +23,14 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
     user: user._id
   })
 
+  if (!user ) {
+    return response.status(403).json({ error: 'user missing' })
+  }  
+
+  if (!blog.title || !blog.url || !blog.author ) {
+    return response.status(400).json({ error: 'title, url or author missing' })
+  }
+
   const savedBlog = await blog.save()
   user.blogs = user.blogs.concat(savedBlog._id)
   await user.save()
@@ -33,6 +41,10 @@ blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) =
 
   const user = request.user
   const blog = await Blog.findById(request.params.id)
+
+  if (!blog) {
+    return response.status(204).end()
+  }
 
   if (blog.user.toString() !== user._id.toString()) {
     return response.status(401).json({error: 'blog can only be deleted by the user who created it'})
